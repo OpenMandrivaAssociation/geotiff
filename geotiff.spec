@@ -1,23 +1,16 @@
-%define name geotiff
-%define version 1.2.2
-%define release %mkrel 6
-
-%define major 1
-%define libname %mklibname geotiff %{major}
 
 %define  _requires_exceptions devel(/lib/libNoVersion)
 
-Name:          %name
-Summary:       Cartographic software
-Version:       %version
-Release:       %release
-Source:        libgeotiff-%{version}.tar.bz2
-Patch:         libgeotiff-%{version}-so_name.patch
-License:       MIT style
-URL:           http://www.remotesensing.org/geotiff/geotiff.html
-Group:         Sciences/Geosciences
-BuildRoot:     %{_tmppath}/%{name}-buildroot
-Requires:      %{_lib}proj0 >= 4.4.3
+Name: geotiff
+Summary: Cartographic software
+Version: 1.2.4
+Release: %mkrel 1
+Group: Sciences/Geosciences
+Source0: libgeotiff-%{version}.tar.gz
+License: MIT style
+URL: http://www.remotesensing.org/geotiff/geotiff.html
+BuildRoot: %{_tmppath}/%{name}-buildroot
+Requires: proj
 BuildRequires: libtiff-devel >= 3.6.0 
 BuildRequires: libjpeg-devel 
 BuildRequires: zlib-devel 
@@ -31,6 +24,14 @@ specifications, projection codes and use, see the WWW web page at:
 
    http://www.remotesensing.org/geotiff/geotiff.html
 
+%files 
+%defattr(-,root,root)
+%{_bindir}/*
+%doc docs/*
+
+#------------------------------------------------------------
+
+%define libname %mklibname geotiff 1
 
 %package -n %libname
 Summary: Cartographic software - Libraries
@@ -42,21 +43,36 @@ This library is designed to permit the extraction and parsing of the
 of GeoTIFF keys in new files. For more information about GeoTIFF
 specifications, projection codes and use, see the WWW web page at:
 
-%package -n %libname-devel
+%post -n %libname -p /sbin/ldconfig
+%postun -n %libname -p /sbin/ldconfig
+
+%files -n %libname
+%defattr(-,root,root)
+%{_libdir}/*.so.*
+
+#------------------------------------------------------------
+
+%define libdev %mklibname geotiff -d
+
+%package -n %libdev
 Summary: Cartographic software - Development files
 Group: Sciences/Geosciences
-License: MIT style
-Requires: %libname = %{version}-%{release}
-Provides: libgeotiff-devel = %{version}-%{release}
+Requires: %libname = %{version}
 Provides: geotiff-devel = %{version}-%{release}
 Requires: libtiff-devel >= 3.6.0
+Obsoletes: %{libname}-devel
 
-%description -n %libname-devel
+%description -n %libdev
 libgeotiff development files.
+
+%files -n %libdev
+%defattr(-,root,root)
+%{_libdir}/*.so
+%{_includedir}/*
+%{_libdir}/*.a
 
 %prep
 %setup -q -n libgeotiff-%version
-%patch -p1
 
 %build
 
@@ -64,6 +80,7 @@ libgeotiff development files.
 	--with-proj=%{_prefix} \
 	--with-jpeg=%{_prefix} \
 	--with-libtiff=%{_prefix} \
+    --without-static \
 	--enable-incode-epsg
 
 make COPTS="$RPM_OPT_FLAGS -fPIC" LDFLAGS="$LDFLAGS -lc"
@@ -78,22 +95,5 @@ rm -rf $RPM_BUILD_ROOT%_datadir/*.csv
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -n %libname -p /sbin/ldconfig
 
-%postun -n %libname -p /sbin/ldconfig
-
-%files 
-%defattr(-,root,root)
-%{_bindir}/*
-%doc docs/*
-
-%files -n %libname
-%defattr(-,root,root)
-%{_libdir}/*.so.*
-
-%files -n %libname-devel
-%defattr(-,root,root)
-%{_libdir}/*.so
-%{_includedir}/*
-%{_libdir}/*.a
 
