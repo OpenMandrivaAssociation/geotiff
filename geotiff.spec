@@ -9,7 +9,6 @@ Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
 License: MIT style
 URL: http://www.remotesensing.org/geotiff/geotiff.html
-BuildRoot: %{_tmppath}/%{name}-buildroot
 Requires: proj
 BuildRequires: libtiff-devel >= 3.6.0 
 BuildRequires: libjpeg-devel 
