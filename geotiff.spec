@@ -7,6 +7,8 @@ Version: 1.2.4
 Release: %mkrel 1
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
+# fix build
+Patch0:    libgeotiff-soname.patch
 License: MIT style
 URL: http://www.remotesensing.org/geotiff/geotiff.html
 Requires: proj
@@ -72,6 +74,7 @@ libgeotiff development files.
 
 %prep
 %setup -q -n libgeotiff-%version
+%patch -p1 -b .soname~
 
 %build
 
