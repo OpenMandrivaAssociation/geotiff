@@ -20,10 +20,7 @@ BuildRequires: proj-devel
 %description
 This library is designed to permit the extraction and parsing of the
 "GeoTIFF" Key directories, as well as definition and installation
-of GeoTIFF keys in new files. For more information about GeoTIFF
-specifications, projection codes and use, see the WWW web page at:
-
-   http://www.remotesensing.org/geotiff/geotiff.html
+of GeoTIFF keys in new files.
 
 %files 
 %defattr(-,root,root)
