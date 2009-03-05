@@ -1,14 +1,16 @@
 
 %define  _requires_exceptions devel(/lib/libNoVersion)
+%define major	1
 
 Name: geotiff
 Summary: Cartographic software
-Version: 1.2.4
-Release: %mkrel 3
+Version: 1.2.5
+Release: %mkrel 1
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
 # fix build
 Patch0:    libgeotiff-soname.patch
+Patch1:    libgeotiff-1.2.5-fix-str-fmt.patch
 License: MIT style
 URL: http://www.remotesensing.org/geotiff/geotiff.html
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -30,7 +32,7 @@ of GeoTIFF keys in new files.
 
 #------------------------------------------------------------
 
-%define libname %mklibname geotiff 1
+%define libname %mklibname geotiff %{major}
 
 %package -n %libname
 Summary: Cartographic software - Libraries
@@ -51,7 +53,7 @@ specifications, projection codes and use, see the WWW web page at:
 
 %files -n %libname
 %defattr(-,root,root)
-%{_libdir}/*.so.*
+%{_libdir}/*.so.%{major}*
 
 #------------------------------------------------------------
 
@@ -76,15 +78,15 @@ libgeotiff development files.
 
 %prep
 %setup -q -n libgeotiff-%version
-%patch -p1 -b .soname~
+%patch0 -p1 -b .soname~
+%patch1 -p0
 
 %build
-
-%configure \
+%configure2_5x \
 	--with-proj=%{_prefix} \
 	--with-jpeg=%{_prefix} \
 	--with-libtiff=%{_prefix} \
-    --without-static \
+    	--without-static \
 	--enable-incode-epsg
 
 make COPTS="$RPM_OPT_FLAGS -fPIC" LDFLAGS="$LDFLAGS -lc"
@@ -92,12 +94,12 @@ make COPTS="$RPM_OPT_FLAGS -fPIC" LDFLAGS="$LDFLAGS -lc"
 %install
 rm -Rf %{buildroot}
 %makeinstall
-chmod 644 $RPM_BUILD_ROOT%{_includedir}/*
+chmod 644 %{buildroot}%{_includedir}/*
 
-rm -rf $RPM_BUILD_ROOT%_datadir/*.csv
+rm -rf %{buildroot}%_datadir/*.csv
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 
 
