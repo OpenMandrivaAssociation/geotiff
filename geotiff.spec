@@ -5,7 +5,7 @@
 Name: geotiff
 Summary: Cartographic software
 Version: 1.2.5
-Release: %mkrel 1
+Release: %mkrel 2
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
 # fix build
