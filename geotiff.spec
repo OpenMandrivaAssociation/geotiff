@@ -19,6 +19,7 @@ BuildRequires: libtiff-devel >= 3.6.0
 BuildRequires: libjpeg-devel 
 BuildRequires: zlib-devel 
 BuildRequires: proj-devel
+BuildRequires: doxygen
 
 %description
 This library is designed to permit the extraction and parsing of the
@@ -27,7 +28,9 @@ of GeoTIFF keys in new files.
 
 %files 
 %defattr(-,root,root)
-%{_bindir}/*
+%{_bindir}/geotifcp
+%{_bindir}/listgeo
+%{_bindir}/makegeo
 %doc docs/*
 
 #------------------------------------------------------------
@@ -75,13 +78,38 @@ libgeotiff development files.
 %{_libdir}/*.so
 %{_includedir}/*
 %{_libdir}/*.a
+%{_libdir}/pkgconfig/%{name}.pc
 
 %prep
 %setup -q -n libgeotiff-%version
 %patch0 -p1 -b .soname~
 %patch1 -p0
 
+# fix wrongly encoded files from tarball
+ 	set +x
+ 	for f in `find . -type f` ; do
+ 	if file $f | grep -q ISO-8859 ; then
+ 	set -x
+ 	iconv -f ISO-8859-1 -t UTF-8 $f > ${f}.tmp && \
+ 	mv -f ${f}.tmp $f
+ 	set +x
+ 	fi
+ 	if file $f | grep -q CRLF ; then
+ 	set -x
+ 	sed -i -e 's|\r||g' $f
+ 	set +x
+ 	fi
+ 	done
+ 	set -x 
+
 %build
+
+# disable -g flag removal
+ 	sed -i 's| \| sed \"s\/-g \/\/\"||g' configure
+ 	
+# use gcc -shared instead of ld -shared to build with -fstack-protector
+ 	sed -i 's|LD_SHARED=@LD_SHARED@|LD_SHARED=@CC@ -shared|' Makefile.in 
+
 %configure2_5x \
 	--with-proj=%{_prefix} \
 	--with-jpeg=%{_prefix} \
@@ -96,7 +124,31 @@ rm -Rf %{buildroot}
 %makeinstall
 chmod 644 %{buildroot}%{_includedir}/*
 
-rm -rf %{buildroot}%_datadir/*.csv
+# install manualy some file
+install -p -m 755 bin/makegeo %{buildroot}%{_bindir}
+
+# install pkgconfig file
+cat > %{name}.pc <<EOF
+prefix=%{_prefix}
+exec_prefix=%{_prefix}
+libdir=%{_libdir}
+includedir=%{_includedir}/%{name}
+
+Name: %{name}
+Description: GeoTIFF file format library
+Version: %{version}
+Libs: -L\${libdir} -lgeotiff
+Cflags: -I\${includedir}
+EOF
+
+mkdir -p %{buildroot}%{_libdir}/pkgconfig/
+install -p -m 644 %{name}.pc %{buildroot}%{_libdir}/pkgconfig/
+
+#clean up junks
+rm -rf %{buildroot}%{_datadir}/*.csv
+
+# generate docs
+doxygen
 
 %clean
 rm -rf %{buildroot}
