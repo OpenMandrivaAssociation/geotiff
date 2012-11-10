@@ -1,0 +1,10 @@
+--- libgeotiff-1.2.4/Makefile.in.orig	2007-02-04 18:57:47.000000000 +0100
++++ libgeotiff-1.2.4/Makefile.in	2007-07-23 18:47:45.000000000 +0200
+@@ -101,6 +101,7 @@
+ 
+ $(GEOTIFF_SO): ${OBJS}
+ 	${LD_SHARED} ${OBJS} ${LIBS} -o $(GEOTIFF_SO)
++	${CC} -shared ${OBJS} ${LIBS} -o $(GEOTIFF_SO) -Wl,-soname=libgeotiff.so.$(VERSION_MAJOR).$(VERSION_MINOR)
+ 	rm -f libgeotiff.$(SO_EXT)
+ 	${LN} $(GEOTIFF_SO) libgeotiff.$(SO_EXT)
+ 
