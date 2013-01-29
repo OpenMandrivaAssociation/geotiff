@@ -1,11 +1,9 @@
-
-%define  _requires_exceptions devel(/lib/libNoVersion)
 %define major	1
 
 Name: geotiff
 Summary: Cartographic software
 Version: 1.2.5
-Release: %mkrel 3
+Release: 4
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
 # fix build
@@ -13,7 +11,6 @@ Patch0:    libgeotiff-soname.patch
 Patch1:    libgeotiff-1.2.5-fix-str-fmt.patch
 License: MIT style
 URL: http://www.remotesensing.org/geotiff/geotiff.html
-BuildRoot: %{_tmppath}/%{name}-buildroot
 Requires: proj
 BuildRequires: libtiff-devel >= 3.6.0 
 BuildRequires: libjpeg-devel 
@@ -46,13 +43,6 @@ This library is designed to permit the extraction and parsing of the
 "GeoTIFF" Key directories, as well as definition and installation
 of GeoTIFF keys in new files. For more information about GeoTIFF
 specifications, projection codes and use, see the WWW web page at:
-
-%if %mdkversion < 200900
-%post -n %libname -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %libname -p /sbin/ldconfig
-%endif
 
 %files -n %libname
 %defattr(-,root,root)
@@ -149,13 +139,6 @@ rm -rf %{buildroot}%{_datadir}/*.csv
 
 # generate docs
 doxygen
-
-%clean
-rm -rf %{buildroot}
-
-
-
-
 
 %changelog
 * Sun Dec 05 2010 Oden Eriksson <oeriksson@mandriva.com> 1.2.5-3mdv2011.0
