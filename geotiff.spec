@@ -6,6 +6,7 @@ Version: 1.2.5
 Release: 4
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
+Source0: %{name}.rpmlintrc
 # fix build
 Patch0:    libgeotiff-soname.patch
 Patch1:    libgeotiff-1.2.5-fix-str-fmt.patch
@@ -24,7 +25,6 @@ This library is designed to permit the extraction and parsing of the
 of GeoTIFF keys in new files.
 
 %files 
-%defattr(-,root,root)
 %{_bindir}/geotifcp
 %{_bindir}/listgeo
 %{_bindir}/makegeo
@@ -45,7 +45,6 @@ of GeoTIFF keys in new files. For more information about GeoTIFF
 specifications, projection codes and use, see the WWW web page at:
 
 %files -n %libname
-%defattr(-,root,root)
 %{_libdir}/*.so.%{major}*
 
 #------------------------------------------------------------
@@ -64,7 +63,6 @@ Obsoletes: %{libname}-devel
 libgeotiff development files.
 
 %files -n %libdev
-%defattr(-,root,root)
 %{_libdir}/*.so
 %{_includedir}/*
 %{_libdir}/*.a
@@ -110,7 +108,6 @@ libgeotiff development files.
 make COPTS="$RPM_OPT_FLAGS -fPIC" LDFLAGS="$LDFLAGS -lc"
 
 %install
-rm -Rf %{buildroot}
 %makeinstall
 chmod 644 %{buildroot}%{_includedir}/*
 
