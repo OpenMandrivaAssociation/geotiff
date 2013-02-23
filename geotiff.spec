@@ -12,8 +12,8 @@ Patch1:    libgeotiff-1.2.5-fix-str-fmt.patch
 License: MIT style
 URL: http://www.remotesensing.org/geotiff/geotiff.html
 Requires: proj
-BuildRequires: libtiff-devel >= 3.6.0 
-BuildRequires: libjpeg-devel 
+BuildRequires: tiff-devel >= 3.6.0 
+BuildRequires: jpeg-devel 
 BuildRequires: zlib-devel 
 BuildRequires: proj-devel
 BuildRequires: doxygen
