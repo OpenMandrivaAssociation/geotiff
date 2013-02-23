@@ -6,6 +6,7 @@ Version: 1.2.5
 Release: 4
 Group: Sciences/Geosciences
 Source0: libgeotiff-%{version}.tar.gz
+Source100:	geotiff.rpmlintrc
 # fix build
 Patch0:    libgeotiff-soname.patch
 Patch1:    libgeotiff-1.2.5-fix-str-fmt.patch
