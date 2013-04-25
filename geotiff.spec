@@ -1,4 +1,4 @@
-%define major	1
+%define major	1.2
 %define libname %mklibname geotiff %{major}
 %define devname %mklibname geotiff -d
 
@@ -30,6 +30,7 @@ of GeoTIFF keys in new files.
 %package -n %{libname}
 Summary:	Cartographic software - Libraries
 Group:		Sciences/Geosciences
+Obsoletes:	%{_lib}geotiff1 < 1.2.5-5
 
 %description -n %{libname}
 This package contains a shared library for %{name}.
