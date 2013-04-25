@@ -119,6 +119,7 @@ doxygen
 %{_bindir}/makegeo
 
 %files -n %{libname}
+%{_libdir}/libgeotiff.so.1
 %{_libdir}/libgeotiff.so.%{major}*
 
 %files -n %{devname}
