@@ -5,7 +5,7 @@
 Summary:	Cartographic software
 Name:		geotiff
 Version:	1.2.5
-Release:	13
+Release:	14
 Group:		Sciences/Geosciences
 License:	MIT style
 Url:		http://trac.osgeo.org/geotiff/
