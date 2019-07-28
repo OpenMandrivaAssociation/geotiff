@@ -1,89 +1,69 @@
-%define major	1.2
-%define libname %mklibname geotiff %{major}
-%define devname %mklibname geotiff -d
+%global  __requires_exclude devel\\(/lib/libNoVersion\\)
 
-Summary:	Cartographic software
-Name:		geotiff
-Version:	1.2.5
-Release:	14
-Group:		Sciences/Geosciences
-License:	MIT style
-Url:		http://trac.osgeo.org/geotiff/
-Source0:	ftp://ftp.remotesensing.org/pub/geotiff/libgeotiff/libgeotiff-%{version}.tar.gz
-#Source100:	geotiff.rpmlintrc
-# fix build
-Patch0:		libgeotiff-soname.patch
-Patch1:		libgeotiff-1.2.5-fix-str-fmt.patch
+%define  major   5
+%define  libname %mklibname geotiff %{major}
+%define  libdev  %mklibname geotiff -d
 
-BuildRequires:	doxygen
-BuildRequires:	jpeg-devel 
-BuildRequires:	tiff-devel >= 3.6.0 
-BuildRequires:	pkgconfig(proj)
-BuildRequires:	pkgconfig(zlib)
-Requires:	proj
+Name:           geotiff
+Summary:        Cartographic software
+Version:        1.5.1
+Release:        1
+Group:          Sciences/Geosciences
+License:        MIT-like
+URL:            https://github.com/OSGeo/libgeotiff
+#https://github.com/OSGeo/libgeotiff/archive/libgeotiff-%%{version}.tar.gz
+Source0:        http://download.osgeo.org/geotiff/libgeotiff/libgeotiff-%{version}.tar.gz
+BuildRequires:  pkgconfig(libtiff-4) >= 3.6.0
+BuildRequires:  pkgconfig(libjpeg)
+BuildRequires:  pkgconfig(zlib)
+BuildRequires:  pkgconfig(proj)
+
+Requires:       proj
+
+Conflicts:      %libname < 1.4.2-7
 
 %description
 This library is designed to permit the extraction and parsing of the
 "GeoTIFF" Key directories, as well as definition and installation
 of GeoTIFF keys in new files.
 
-%package -n %{libname}
-Summary:	Cartographic software - Libraries
-Group:		Sciences/Geosciences
-Obsoletes:	%{_lib}geotiff1 < 1.2.5-5
+%package -n %libname
+Summary:        Cartographic software - Libraries
+Group:          Sciences/Geosciences
 
-%description -n %{libname}
-This package contains a shared library for %{name}.
+%description -n %libname
+This library is designed to permit the extraction and parsing of the
+"GeoTIFF" Key directories, as well as definition and installation
+of GeoTIFF keys in new files. For more information about GeoTIFF
+specifications, projection codes and use, see the WWW web page at:
 
-%package -n %{devname}
-Summary:	Cartographic software - Development files
-Group:		Sciences/Geosciences
-Requires:	%{libname} = %{version}
-Provides:	geotiff-devel = %{version}-%{release}
+%package -n %libdev
+Summary:        Cartographic software - Development files
+Group:          Sciences/Geosciences
+Requires:       %libname = %{version}
+Provides:       geotiff-devel = %{version}-%{release}
+Obsoletes:      %{libname}-devel
 
-%description -n %{devname}
+%description -n %libdev
 libgeotiff development files.
 
 %prep
-%setup -qn libgeotiff-%{version}
-%apply_patches
-
-# fix wrongly encoded files from tarball
-set +x
-for f in `find . -type f` ; do
-	if file $f | grep -q ISO-8859 ; then
-		set -x
-		iconv -f ISO-8859-1 -t UTF-8 $f > ${f}.tmp && \
-		mv -f ${f}.tmp $f
-		set +x
-	fi
-	if file $f | grep -q CRLF ; then
-		set -x
-		sed -i -e 's|\r||g' $f
-		set +x
-	fi
-done
-set -x 
+%setup -q -n libgeotiff-%{version}
+%autopatch -p1
 
 %build
-# disable -g flag removal
-sed -i 's| \| sed \"s\/-g \/\/\"||g' configure
- 	
-# use gcc -shared instead of ld -shared to build with -fstack-protector
-sed -i 's|LD_SHARED=@LD_SHARED@|LD_SHARED=@CC@ -shared|' Makefile.in 
-
-%configure2_5x \
-	--with-proj=%{_prefix} \
-	--with-jpeg=%{_prefix} \
-	--with-libtiff=%{_prefix} \
-    	--without-static \
+%configure \
+	--disable-static \
+	--includedir=%{_includedir}/lib%{name}/ \
+	--with-jpeg \
+	--with-zip \
 	--enable-incode-epsg
-
-%make
+%make_build
 
 %install
-%makeinstall
-chmod 644 %{buildroot}%{_includedir}/*
+%make_install
+
+chmod 644 %{buildroot}%{_includedir}/lib%{name}/*
 
 # install manualy some file
 install -p -m 755 bin/makegeo %{buildroot}%{_bindir}
@@ -93,37 +73,33 @@ cat > %{name}.pc <<EOF
 prefix=%{_prefix}
 exec_prefix=%{_prefix}
 libdir=%{_libdir}
-includedir=%{_includedir}/%{name}
+includedir=%{_includedir}/lib%{name}
 
-Name:	%{name}
-Description:	GeoTIFF file format library
-Version:	%{version}
-Libs:	-L\${libdir} -lgeotiff
-Cflags:	-I\${includedir}
+Name: %{name}
+Description: GeoTIFF file format library
+Version: %{version}
+Libs: -L\${libdir} -lgeotiff
+Cflags: -I\${includedir}
 EOF
 
 mkdir -p %{buildroot}%{_libdir}/pkgconfig/
 install -p -m 644 %{name}.pc %{buildroot}%{_libdir}/pkgconfig/
 
-#clean up junks
-rm -rf %{buildroot}%{_datadir}/*.csv
-rm -rf %{buildroot}%{_libdir}/*.a
+find %{buildroot} -name '*.la' -delete
 
-# generate docs
-doxygen
-
-%files 
-%doc docs/*
+%files
+%license LICENSE
+%doc ChangeLog
 %{_bindir}/geotifcp
+%{_bindir}/applygeo
 %{_bindir}/listgeo
 %{_bindir}/makegeo
+%{_mandir}/man1/*.1*
 
-%files -n %{libname}
-%{_libdir}/libgeotiff.so.1
-%{_libdir}/libgeotiff.so.%{major}*
+%files -n %libname
+%{_libdir}/*.so.%{major}{,.*}
 
-%files -n %{devname}
+%files -n %libdev
 %{_libdir}/*.so
-%{_includedir}/*
+%{_includedir}/lib%{name}/
 %{_libdir}/pkgconfig/%{name}.pc
-
