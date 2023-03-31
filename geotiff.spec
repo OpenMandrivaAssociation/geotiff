@@ -7,7 +7,7 @@
 Name:           geotiff
 Summary:        Cartographic software
 Version:        1.7.1
-Release:        1
+Release:        2
 Group:          Sciences/Geosciences
 License:        MIT-like
 URL:            https://github.com/OSGeo/libgeotiff
