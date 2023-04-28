@@ -1,13 +1,14 @@
 %global  __requires_exclude devel\\(/lib/libNoVersion\\)
 
 %define  major   5
-%define  libname %mklibname geotiff %{major}
+%define  oldlibname %mklibname geotiff 5
+%define  libname %mklibname geotiff
 %define  libdev  %mklibname geotiff -d
 
 Name:           geotiff
 Summary:        Cartographic software
 Version:        1.7.1
-Release:        2
+Release:        3
 Group:          Sciences/Geosciences
 License:        MIT-like
 URL:            https://github.com/OSGeo/libgeotiff
@@ -30,6 +31,7 @@ of GeoTIFF keys in new files.
 %package -n %libname
 Summary:        Cartographic software - Libraries
 Group:          Sciences/Geosciences
+%rename %{oldlibname}
 
 %description -n %libname
 This library is designed to permit the extraction and parsing of the
