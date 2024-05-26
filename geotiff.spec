@@ -7,8 +7,8 @@
 
 Name:           geotiff
 Summary:        Cartographic software
-Version:        1.7.1
-Release:        4
+Version:        1.7.3
+Release:        1
 Group:          Sciences/Geosciences
 License:        MIT-like
 URL:            https://github.com/OSGeo/libgeotiff
@@ -104,3 +104,4 @@ find %{buildroot} -name '*.la' -delete
 %{_libdir}/*.so
 %{_includedir}/lib%{name}/
 %{_libdir}/pkgconfig/%{name}.pc
+%{_libdir}/pkgconfig/lib%{name}.pc
