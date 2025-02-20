@@ -7,7 +7,7 @@
 
 Name:           geotiff
 Summary:        Cartographic software
-Version:        1.7.3
+Version:        1.7.4
 Release:        1
 Group:          Sciences/Geosciences
 License:        MIT-like
